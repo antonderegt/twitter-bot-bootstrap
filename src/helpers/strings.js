@@ -6,9 +6,9 @@ module.exports = {
     ],
     queryStringSubQuery: [
         '',
-        'how to',
-        'tip',
-        'interesting'
+        ' how to',
+        ' tip',
+        ' interesting'
     ],
     blockedStrings: [
         'porn',
