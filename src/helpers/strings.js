@@ -5,7 +5,9 @@ module.exports = {
         'antonderegt'
     ],
     queryStringSubQuery: [
-        ''
+        'how to',
+        'tip',
+        'interesting'
     ],
     blockedStrings: [
         'porn',
