@@ -1,6 +1,8 @@
 module.exports = {
     queryString: [
-        '100DaysOfCode'
+        'reactjs',
+        'es6',
+        'antonderegt'
     ],
     queryStringSubQuery: [
         ''
