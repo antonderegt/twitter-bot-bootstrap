@@ -1,6 +1,6 @@
 module.exports = {
     queryString: [
-        ''
+        'reactjs'
     ],
     queryStringSubQuery: [
         ''
