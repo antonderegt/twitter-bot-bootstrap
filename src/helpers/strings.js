@@ -1,8 +1,7 @@
 module.exports = {
     queryString: [
         'reactjs',
-        'es6',
-        'antonderegt'
+        'es6'
     ],
     queryStringSubQuery: [
         '',
