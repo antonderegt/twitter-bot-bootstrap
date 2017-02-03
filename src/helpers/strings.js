@@ -1,7 +1,8 @@
 module.exports = {
     queryString: [
         'reactjs',
-        'es6'
+        'es6',
+        '#freecodecamp'
     ],
     queryStringSubQuery: [
         '',
