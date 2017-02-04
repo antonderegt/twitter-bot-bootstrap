@@ -8,8 +8,9 @@ var sentiment = require('./helpers/sentiment')
 var Twitter = new Twit(config)
 
 // Frequency in minutes
-var retweetFrequency = 240
-var favoriteFrequency = 240
+var retweetFrequency = 25
+var favoriteFrequency = 25
+var retweetToggle = 8;
 
 // RANDOM QUERY STRING  =========================
 
@@ -32,55 +33,60 @@ var rs = ura(strings.responseString)
 // * popular : return only the most popular results in the response.
 
 var retweet = function () {
-  var paramQS = qs()
-  paramQS += qsSq()
-  var paramRT = rt()
-  var params = {
-    q: paramQS + paramBls(),
-    result_type: paramRT,
-    lang: 'en'
-  }
+  if(retweetToggle === 0) {
+    var paramQS = qs()
+    paramQS += qsSq()
+    var paramRT = rt()
+    var params = {
+      q: paramQS + paramBls(),
+      result_type: paramRT,
+      lang: 'en'
+    }
 
-  Twitter.get('search/tweets', params, function (err, data) {
-        // if there no errors
-    if (!err) {
-            // grab ID of tweet to retweet
-      try {
-                // run sentiment check ==========
-        var retweetId = data.statuses[0].id_str
-        var retweetText = data.statuses[0].text
+    Twitter.get('search/tweets', params, function (err, data) {
+          // if there no errors
+      if (!err) {
+              // grab ID of tweet to retweet
+        try {
+                  // run sentiment check ==========
+          var retweetId = data.statuses[0].id_str
+          var retweetText = data.statuses[0].text
 
-                // setup http call
-        var httpCall = sentiment.init()
+                  // setup http call
+          var httpCall = sentiment.init()
 
-        httpCall.send('txt=' + retweetText).end(function (result) {
-          var sentim = result.body.result.sentiment
-          var confidence = parseFloat(result.body.result.confidence)
-          console.log(confidence, sentim)
-          // if sentiment is Negative and the confidence is above 75%
-          if (sentim === 'Negative' && confidence >= 75) {
-            console.log('RETWEET NEG NEG NEG', sentim, retweetText)
-            return
+          httpCall.send('txt=' + retweetText).end(function (result) {
+            var sentim = result.body.result.sentiment
+            var confidence = parseFloat(result.body.result.confidence)
+            console.log(confidence, sentim)
+            // if sentiment is Negative and the confidence is above 75%
+            if (sentim === 'Negative' && confidence >= 75) {
+              console.log('RETWEET NEG NEG NEG', sentim, retweetText)
+              return
+            }
+          })
+        } catch (e) {
+          console.log('retweetId DERP!', e.message, 'Query String:', paramQS)
+          return
+        }
+              // Tell TWITTER to retweet
+        Twitter.post('statuses/retweet/:id', {
+          id: retweetId
+        }, function (err, response) {
+          if (response) {
+            console.log('RETWEETED!', ' Query String:', paramQS)
+          }
+                  // if there was an error while tweeting
+          if (err) {
+            console.log('RETWEET ERROR! Duplication maybe...:', err, 'Query String:', paramQS)
           }
         })
-      } catch (e) {
-        console.log('retweetId DERP!', e.message, 'Query String:', paramQS)
-        return
-      }
-            // Tell TWITTER to retweet
-      Twitter.post('statuses/retweet/:id', {
-        id: retweetId
-      }, function (err, response) {
-        if (response) {
-          console.log('RETWEETED!', ' Query String:', paramQS)
-        }
-                // if there was an error while tweeting
-        if (err) {
-          console.log('RETWEET ERROR! Duplication maybe...:', err, 'Query String:', paramQS)
-        }
-      })
-    } else { console.log('Something went wrong while SEARCHING...') }
-  })
+      } else { console.log('Something went wrong while SEARCHING...') }
+    })
+  } else {
+    retweetToggle--;
+    console.log('Toggle--:', retweetToggle);
+  }
 }
 
 // retweet on bot start
