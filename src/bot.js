@@ -33,42 +33,43 @@ var rs = ura(strings.responseString)
 // * popular : return only the most popular results in the response.
 
 var retweet = function () {
-  if(retweetToggle === 0) {
-    var paramQS = qs()
-    paramQS += qsSq()
-    var paramRT = rt()
-    var params = {
-      q: paramQS + paramBls(),
-      result_type: paramRT,
-      lang: 'en'
-    }
+  var paramQS = qs()
+  paramQS += qsSq()
+  var paramRT = rt()
+  var params = {
+    q: paramQS + paramBls(),
+    result_type: paramRT,
+    lang: 'en'
+  }
 
-    Twitter.get('search/tweets', params, function (err, data) {
-          // if there no errors
-      if (!err) {
-              // grab ID of tweet to retweet
-        try {
-                  // run sentiment check ==========
-          var retweetId = data.statuses[0].id_str
-          var retweetText = data.statuses[0].text
+  Twitter.get('search/tweets', params, function (err, data) {
+        // if there no errors
+    if (!err) {
+            // grab ID of tweet to retweet
+      try {
+                // run sentiment check ==========
+        var retweetId = data.statuses[0].id_str
+        var retweetText = data.statuses[0].text
 
-                  // setup http call
-          var httpCall = sentiment.init()
+                // setup http call
+        var httpCall = sentiment.init()
 
-          httpCall.send('txt=' + retweetText).end(function (result) {
-            var sentim = result.body.result.sentiment
-            var confidence = parseFloat(result.body.result.confidence)
-            console.log(confidence, sentim)
-            // if sentiment is Negative and the confidence is above 75%
-            if (sentim === 'Negative' && confidence >= 75) {
-              console.log('RETWEET NEG NEG NEG', sentim, retweetText)
-              return
-            }
-          })
-        } catch (e) {
-          console.log('retweetId DERP!', e.message, 'Query String:', paramQS)
-          return
-        }
+        httpCall.send('txt=' + retweetText).end(function (result) {
+          var sentim = result.body.result.sentiment
+          var confidence = parseFloat(result.body.result.confidence)
+          console.log(confidence, sentim)
+          // if sentiment is Negative and the confidence is above 75%
+          if (sentim === 'Negative' && confidence >= 75) {
+            console.log('RETWEET NEG NEG NEG', sentim, retweetText)
+            return
+          }
+        })
+      } catch (e) {
+        console.log('retweetId DERP!', e.message, 'Query String:', paramQS)
+        return
+      }
+      if(retweetToggle === 0) {
+        retweetToggle = 8;
               // Tell TWITTER to retweet
         Twitter.post('statuses/retweet/:id', {
           id: retweetId
