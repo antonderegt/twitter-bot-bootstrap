@@ -68,8 +68,8 @@ var retweet = function () {
         console.log('retweetId DERP!', e.message, 'Query String:', paramQS)
         return
       }
-      if(retweetToggle === 0) {
-        retweetToggle = 8;
+
+      if(retweetToggle === 0){
               // Tell TWITTER to retweet
         Twitter.post('statuses/retweet/:id', {
           id: retweetId
@@ -82,12 +82,15 @@ var retweet = function () {
             console.log('RETWEET ERROR! Duplication maybe...:', err, 'Query String:', paramQS)
           }
         })
+        retweetToggle = 8;
+      } else {
+        retweetToggle--;
+        console.log('retweetToggle-- =', retweetToggle);
+      }
+
       } else { console.log('Something went wrong while SEARCHING...') }
+
     })
-  } else {
-    retweetToggle--;
-    console.log('retweetToggle-- =', retweetToggle);
-  }
 }
 
 // retweet on bot start
