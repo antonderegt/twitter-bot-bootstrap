@@ -8,7 +8,7 @@ var sentiment = require('./helpers/sentiment')
 var Twitter = new Twit(config)
 
 // Frequency in minutes
-var retweetFrequency = 25
+var retweetFrequency = 0.1
 var favoriteFrequency = 25
 var retweetToggle = 8;
 
