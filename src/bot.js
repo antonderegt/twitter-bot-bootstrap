@@ -85,7 +85,7 @@ var retweet = function () {
     })
   } else {
     retweetToggle--;
-    console.log('Toggle--:', retweetToggle);
+    console.log('retweetToggle-- =', retweetToggle);
   }
 }
 
